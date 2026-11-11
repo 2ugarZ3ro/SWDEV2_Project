@@ -6,7 +6,7 @@ import dayjs from "dayjs";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { api } from "@/libs/api";
 import { Booking } from "@/types";
-import SlotPicker, { Slot } from "./SlotPicker";
+import SlotPicker, { Slot, isPast } from "./SlotPicker";
 
 export default function EditBookingDialog({
   booking,
@@ -26,6 +26,7 @@ export default function EditBookingDialog({
   const [error, setError] = useState("");
 
   async function save() {
+    if (isPast(slot)) return setError("This time has already passed");
     try {
       await api(`/bookings/${booking._id}`, {
         method: "PUT",

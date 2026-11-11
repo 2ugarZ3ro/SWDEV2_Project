@@ -12,6 +12,25 @@ import AvailabilityTimeline from "./AvailabilityTimeline";
 
 export type Slot = { date: Dayjs; start: string; duration: number };
 
+const minutes = (time: string) => {
+  const [h, m] = time.split(":").map(Number);
+  return h * 60 + m;
+};
+const nowMinutes = () => dayjs().hour() * 60 + dayjs().minute();
+
+export const isPast = (slot: Slot) =>
+  slot.date.isSame(dayjs(), "day") && minutes(slot.start) < nowMinutes();
+
+// next half hour today, or 09:00 tomorrow once the day is nearly over
+export function defaultSlot(): Slot {
+  const next = Math.max(Math.ceil(nowMinutes() / 30) * 30, 6 * 60);
+  if (next >= 21 * 60 + 30) {
+    return { date: dayjs().add(1, "day"), start: "09:00", duration: 1 };
+  }
+  const start = `${String(Math.floor(next / 60)).padStart(2, "0")}:${next % 60 ? "30" : "00"}`;
+  return { date: dayjs(), start, duration: 1 };
+}
+
 export default function SlotPicker({
   facility,
   slot,
@@ -32,6 +51,12 @@ export default function SlotPicker({
     ).then(setBusy);
   }, [facility._id, day, excludeId]);
 
+  // today's hours that are already gone show as unavailable
+  const passed: BusySlot[] =
+    slot.date.isSame(dayjs(), "day") && nowMinutes() > 6 * 60
+      ? [{ startTime: "", endTime: "", startMinutes: 6 * 60, endMinutes: nowMinutes() }]
+      : [];
+
   const end = dayjs(`2000-01-01 ${slot.start}`)
     .add(slot.duration * 60, "minute")
     .format("HH:mm");
@@ -50,7 +75,7 @@ export default function SlotPicker({
       <div>
         <p className="text-sm font-medium mb-1">Availability</p>
         <AvailabilityTimeline
-          busy={busy}
+          busy={[...passed, ...busy]}
           start={slot.start}
           duration={slot.duration}
           onPick={(start) => onChange({ ...slot, start })}

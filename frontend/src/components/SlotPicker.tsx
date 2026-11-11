@@ -1,11 +1,14 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import dayjs, { Dayjs } from "dayjs";
 import { TextField, ToggleButton, ToggleButtonGroup } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { Facility } from "@/types";
+import { api } from "@/libs/api";
+import { BusySlot, Facility } from "@/types";
+import AvailabilityTimeline from "./AvailabilityTimeline";
 
 export type Slot = { date: Dayjs; start: string; duration: number };
 
@@ -18,6 +21,15 @@ export default function SlotPicker({
   slot: Slot;
   onChange: (slot: Slot) => void;
 }) {
+  const [busy, setBusy] = useState<BusySlot[]>([]);
+  const day = slot.date.format("YYYY-MM-DD");
+
+  useEffect(() => {
+    api<BusySlot[]>(`/facilities/${facility._id}/availability?date=${day}`).then(
+      setBusy
+    );
+  }, [facility._id, day]);
+
   const end = dayjs(`2000-01-01 ${slot.start}`)
     .add(slot.duration * 60, "minute")
     .format("HH:mm");
@@ -32,6 +44,19 @@ export default function SlotPicker({
           onChange={(date) => date && onChange({ ...slot, date })}
         />
       </LocalizationProvider>
+
+      <div>
+        <p className="text-sm font-medium mb-1">Availability</p>
+        <AvailabilityTimeline
+          busy={busy}
+          start={slot.start}
+          duration={slot.duration}
+          onPick={(start) => onChange({ ...slot, start })}
+        />
+        <p className="text-xs text-gray-500 mt-1">
+          Select a free slot to set your start time
+        </p>
+      </div>
 
       <TextField
         label="Start time"

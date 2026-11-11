@@ -6,6 +6,7 @@ import dayjs from "dayjs";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle } from "@mui/material";
 import { api } from "@/libs/api";
 import { Booking } from "@/types";
+import EditBookingDialog from "./EditBookingDialog";
 
 const hhmm = (minutes: number) =>
   `${String(Math.floor(minutes / 60)).padStart(2, "0")}:${String(minutes % 60).padStart(2, "0")}`;
@@ -21,6 +22,7 @@ export default function BookingList({
   isAdmin: boolean;
 }) {
   const router = useRouter();
+  const [editing, setEditing] = useState<Booking | null>(null);
   const [deleting, setDeleting] = useState<Booking | null>(null);
 
   async function remove() {
@@ -65,6 +67,12 @@ export default function BookingList({
                 <td className="p-4">฿{b.facility.hourlyRate * b.durationHours}</td>
                 <td className="p-4">
                   <button
+                    onClick={() => setEditing(b)}
+                    className="text-teal-700 font-medium mr-4"
+                  >
+                    Edit
+                  </button>
+                  <button
                     onClick={() => setDeleting(b)}
                     className="text-red-600 font-medium"
                   >
@@ -76,6 +84,15 @@ export default function BookingList({
           </tbody>
         </table>
       </div>
+
+      {editing && (
+        <EditBookingDialog
+          key={editing._id}
+          booking={editing}
+          token={token}
+          onClose={() => setEditing(null)}
+        />
+      )}
 
       <Dialog open={!!deleting} onClose={() => setDeleting(null)}>
         <DialogTitle>Delete this booking?</DialogTitle>

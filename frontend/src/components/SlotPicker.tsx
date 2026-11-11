@@ -16,19 +16,21 @@ export default function SlotPicker({
   facility,
   slot,
   onChange,
+  excludeId = "",
 }: {
   facility: Facility;
   slot: Slot;
   onChange: (slot: Slot) => void;
+  excludeId?: string;
 }) {
   const [busy, setBusy] = useState<BusySlot[]>([]);
   const day = slot.date.format("YYYY-MM-DD");
 
   useEffect(() => {
-    api<BusySlot[]>(`/facilities/${facility._id}/availability?date=${day}`).then(
-      setBusy
-    );
-  }, [facility._id, day]);
+    api<BusySlot[]>(
+      `/facilities/${facility._id}/availability?date=${day}&exclude=${excludeId}`
+    ).then(setBusy);
+  }, [facility._id, day, excludeId]);
 
   const end = dayjs(`2000-01-01 ${slot.start}`)
     .add(slot.duration * 60, "minute")

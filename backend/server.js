@@ -135,8 +135,14 @@ const bookings = require("./routes/bookings");
 
 dotenv.config({ path: "./config/config.env" });
 
-if (process.env.MONGO_URI) {
-  connectDB().catch((error) => {
+let connection;
+const connect = () => (connection ??= connectDB().catch((error) => {
+  connection = undefined;
+  throw error;
+}));
+
+if (process.env.MONGO_URI && !process.env.VERCEL) {
+  connect().catch((error) => {
     console.error(`Database connection failed: ${error.message}`);
     process.exit(1);
   });
@@ -159,10 +165,20 @@ app.use(express.urlencoded({ extended: true, limit: "10mb" }));
 app.use(cookieParser());
 app.use(cors({
   origin: process.env.NODE_ENV === "production"
-    ? process.env.FRONTEND_URL
+    ? process.env.FRONTEND_URL?.replace(/\/$/, "")
     : "http://localhost:3000",
   credentials: true,
 }));
+
+// a cold serverless instance may get a request before the database is ready
+app.use("/api", async (req, res, next) => {
+  try {
+    await connect();
+    next();
+  } catch (error) {
+    next(error);
+  }
+});
 
 app.use("/api/v1/auth", auth);
 app.use("/api/v1/facilities", facilities);

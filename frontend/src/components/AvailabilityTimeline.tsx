@@ -56,13 +56,13 @@ export default function AvailabilityTimeline({
           />
         ))}
         <div
-          className="absolute inset-y-0 bg-teal-700/90 rounded text-white text-xs flex items-center justify-center pointer-events-none"
+          className="absolute inset-y-0 bg-teal-700/90 rounded text-white text-[10px] flex items-center justify-center overflow-hidden whitespace-nowrap pointer-events-none"
           style={{
             left: `${Math.max(pct(from), 0)}%`,
             width: `${Math.min(pct(to), 100) - Math.max(pct(from), 0)}%`,
           }}
         >
-          {duration} h
+          {duration >= 1 && duration}
         </div>
       </div>
       <div className="flex gap-4 text-xs text-gray-500 mt-1">

@@ -42,10 +42,6 @@ export default async function FacilityPage({
               <p className="font-semibold">฿{facility.hourlyRate} / hour</p>
             </div>
           </div>
-          <p className="text-sm text-teal-800">
-            No past dates · 0.5–2 h · Finish before midnight · No overlapping
-            facility or member bookings.
-          </p>
         </div>
 
         <div>

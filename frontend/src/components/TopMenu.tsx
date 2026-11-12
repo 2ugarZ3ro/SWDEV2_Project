@@ -20,6 +20,7 @@ export default async function TopMenu() {
             <>
               <Link href="/bookings">All Bookings</Link>
               <Link href="/admin/facilities">Manage Facilities</Link>
+              <Link href="/admin/dashboard">Dashboard</Link>
             </>
           )}
         </div>

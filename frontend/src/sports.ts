@@ -1,9 +1,9 @@
 export const sports = ["Badminton", "Tennis", "PingPong", "Football", "Fitness"];
 
-export const sportColors: Record<string, string> = {
-  Badminton: "bg-emerald-100",
-  Tennis: "bg-amber-100",
-  PingPong: "bg-sky-100",
-  Football: "bg-lime-100",
-  Fitness: "bg-rose-100",
+export const sportImages: Record<string, string> = {
+  Badminton: "/images/badminton.jpg",
+  Tennis: "/images/tennis.jpg",
+  PingPong: "/images/pingpong.webp",
+  Football: "/images/football.jpg",
+  Fitness: "/images/fitness.jpg",
 };

@@ -3,8 +3,8 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "@/app/api/auth/[...nextauth]/authOptions";
 import { api } from "@/libs/api";
 import { Facility } from "@/types";
-import { sportColors } from "@/sports";
 import BookingForm from "@/components/BookingForm";
+import SportImage from "@/components/SportImage";
 
 export default async function FacilityPage({
   params,
@@ -26,10 +26,11 @@ export default async function FacilityPage({
           </span>
           <h1 className="text-4xl font-bold">{facility.name}</h1>
           <p className="text-gray-500">{facility.location}</p>
-          <div
-            className={`h-64 rounded-xl flex items-center justify-center text-2xl font-semibold text-teal-800 ${sportColors[facility.sportType]}`}
-          >
-            {facility.sportType}
+          <div className="relative h-72 rounded-xl overflow-hidden">
+            <SportImage
+              sport={facility.sportType}
+              sizes="(min-width: 1024px) 560px, 100vw"
+            />
           </div>
           <div className="bg-white rounded-xl shadow p-5 grid grid-cols-2 gap-4">
             <div>

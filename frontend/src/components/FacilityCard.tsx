@@ -1,14 +1,18 @@
 import Link from "next/link";
 import { Facility } from "@/types";
-import { sportColors } from "@/sports";
+import SportImage from "./SportImage";
 
 export default function FacilityCard({ facility }: { facility: Facility }) {
   return (
     <div className="bg-white rounded-xl shadow overflow-hidden flex flex-col">
-      <div
-        className={`h-20 px-5 flex items-center font-semibold text-teal-800 ${sportColors[facility.sportType]}`}
-      >
-        {facility.sportType}
+      <div className="relative h-44">
+        <SportImage
+          sport={facility.sportType}
+          sizes="(min-width: 1024px) 360px, (min-width: 640px) 50vw, 100vw"
+        />
+        <span className="absolute left-3 top-3 px-3 py-0.5 rounded-full bg-white/90 text-teal-800 text-xs font-medium">
+          {facility.sportType}
+        </span>
       </div>
       <div className="p-5 flex flex-col gap-1 flex-1">
         <h2 className="text-xl font-bold">{facility.name}</h2>
